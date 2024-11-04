@@ -583,7 +583,7 @@ def runner(model_names, test_categories, api_sanity_check):
     # This is helpful when you only want to run the evaluation for a subset of models and test categories.
     update_leaderboard_table_with_score_file(LEADERBOARD_TABLE, SCORE_PATH)
     # Write the leaderboard table to a file
-    generate_leaderboard_csv(LEADERBOARD_TABLE, SCORE_PATH, model_names, test_categories)
+    generate_leaderboard_csv(LEADERBOARD_TABLE, SCORE_PATH, model_names, test_categories, wandb_project)
 
     # Clean up the executable expected output files
     # They should be re-generated the next time the evaluation is run
@@ -642,7 +642,7 @@ def main(model, test_category, api_sanity_check):
             # We patch it here to avoid confusing the user.
             model_names.append(model_name.replace("/", "_"))
 
-    runner(model_names, test_categories, api_sanity_check)
+    runner(model_names, test_categories, api_sanity_check, wandb_project)
 
 
 def get_handler(model_name):
@@ -672,6 +672,11 @@ if __name__ == "__main__":
         help="Perform the REST API status sanity check before running the evaluation. By default, the sanity check is skipped.",
     )
 
+    parser.add_argument(
+        "--wandb_project",
+        type=str,
+        help="The entity and project to which to log the generated .csv in the format 'entity:project'"
+    )
     args = parser.parse_args()
 
     load_dotenv(dotenv_path=DOTENV_PATH, verbose=True, override=True)  # Load the .env file

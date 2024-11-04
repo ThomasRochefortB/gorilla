@@ -39,6 +39,7 @@ class BaseHandler:
             if "multi_turn" in test_entry["id"]:
                 return self.inference_multi_turn_FC(test_entry, include_debugging_log)
             else:
+                print("AYYOOO")
                 return self.inference_single_turn_FC(test_entry, include_debugging_log)
         # Prompting model
         else:

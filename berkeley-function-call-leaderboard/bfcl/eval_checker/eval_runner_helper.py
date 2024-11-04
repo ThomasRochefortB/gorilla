@@ -14,6 +14,52 @@ from bfcl.utils import (
     write_list_of_dicts_to_file,
 )
 from tqdm import tqdm
+import wandb
+from datetime import datetime
+import pandas as pd
+
+def init_wandb():
+    """Initialize WandB run"""
+    wandb.init(
+        entity="valencelabs",
+        project="agentic-systems",
+        name=f"BFCLv3-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    )
+
+def log_to_wandb(output_path):
+    """Log CSV files to WandB"""
+    # Read the CSV files
+    non_live_df = pd.read_csv(output_path / "data_non_live.csv")
+    live_df = pd.read_csv(output_path / "data_live.csv")
+    overall_df = pd.read_csv(output_path / "data_overall.csv")
+
+    # Convert DataFrames to WandB Tables
+    non_live_table = wandb.Table(dataframe=non_live_df)
+    live_table = wandb.Table(dataframe=live_df)
+    overall_table = wandb.Table(dataframe=overall_df)
+
+    # Create artifacts
+    bfcl_artifact = wandb.Artifact("bfcl_results", type="dataset")
+    
+    # Add tables to artifact
+    bfcl_artifact.add(non_live_table, "non_live_results")
+    bfcl_artifact.add(live_table, "live_results")
+    bfcl_artifact.add(overall_table, "overall_results")
+    
+    # Add raw CSV files to artifact
+    bfcl_artifact.add_file(str(output_path / "data_non_live.csv"))
+    bfcl_artifact.add_file(str(output_path / "data_live.csv"))
+    bfcl_artifact.add_file(str(output_path / "data_overall.csv"))
+
+    # Log tables directly
+    wandb.log({
+        "Non-Live Results": non_live_table,
+        "Live Results": live_table,
+        "Overall Results": overall_table
+    })
+
+    # Log artifact
+    wandb.log_artifact(bfcl_artifact)
 
 
 def api_status_sanity_check_rest():
@@ -485,6 +531,8 @@ def generate_leaderboard_csv(
                 MODEL_METADATA_MAPPING[model_name_escaped][3],
             ]
         )
+    
+    
         
     # Write Non-Live Score File
     data_non_live.sort(key=lambda x: x[2], reverse=True)
@@ -550,7 +598,11 @@ def generate_leaderboard_csv(
     #     check_all_category_present(
     #         category_status, eval_models=eval_models, eval_categories=eval_categories
     #     )
-
+    
+    # Initialize WandB and log results
+    init_wandb()
+    log_to_wandb(output_path)
+    wandb.finish()
 
 def check_model_category_status(score_path):
     result_path = score_path.replace("score", "result")
