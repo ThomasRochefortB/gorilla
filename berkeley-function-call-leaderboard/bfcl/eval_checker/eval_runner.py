@@ -428,7 +428,7 @@ def ast_file_runner(
 
 
 #### Main runner function ####
-def runner(model_names, test_categories, api_sanity_check):
+def runner(model_names, test_categories, api_sanity_check, wandb_project):
 
     # A flag to indicate if the API has been tested.
     # We should always test the API with ground truth first before running the executable tests.
@@ -623,7 +623,7 @@ def main(model, test_category, api_sanity_check):
     runner(model_names, test_categories, api_sanity_check)
 
 
-def main(model, test_category, api_sanity_check):
+def main(model, test_category, api_sanity_check, wandb_project):
     test_categories = None
     if test_category is not None:
         test_categories = []
@@ -674,6 +674,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--wandb_project",
+        default=None,
         type=str,
         help="The entity and project to which to log the generated .csv in the format 'entity:project'"
     )
@@ -681,4 +682,4 @@ if __name__ == "__main__":
 
     load_dotenv(dotenv_path=DOTENV_PATH, verbose=True, override=True)  # Load the .env file
     
-    main(args.model, args.test_category, args.api_sanity_check)
+    main(args.model, args.test_category, args.api_sanity_check, args.wandb_project)

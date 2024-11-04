@@ -18,11 +18,12 @@ import wandb
 from datetime import datetime
 import pandas as pd
 
-def init_wandb():
+def init_wandb(wandb_project):
     """Initialize WandB run"""
     wandb.init(
-        entity="valencelabs",
-        project="agentic-systems",
+        #wandb_project is 'entity:project'
+        entity=wandb_project.split(":")[0],
+        project=wandb_project.split(":")[1],
         name=f"BFCLv3-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
     )
 
@@ -288,7 +289,7 @@ def get_cost_letency_info(model_name, cost_data, latency_data):
 
 # TODO: Refactor this function to reduce code duplication
 def generate_leaderboard_csv(
-    leaderboard_table, output_path, eval_models=None, eval_categories=None
+    leaderboard_table, output_path, eval_models=None, eval_categories=None, wandb_project=None
 ):
     print("📈 Aggregating data to generate leaderboard score table...")
     data_non_live = []
@@ -598,11 +599,12 @@ def generate_leaderboard_csv(
     #     check_all_category_present(
     #         category_status, eval_models=eval_models, eval_categories=eval_categories
     #     )
-    
-    # Initialize WandB and log results
-    init_wandb()
-    log_to_wandb(output_path)
-    wandb.finish()
+
+    if wandb_project:
+        # Initialize WandB and log results
+        init_wandb(wandb_project)
+        log_to_wandb(output_path)
+        wandb.finish()
 
 def check_model_category_status(score_path):
     result_path = score_path.replace("score", "result")
