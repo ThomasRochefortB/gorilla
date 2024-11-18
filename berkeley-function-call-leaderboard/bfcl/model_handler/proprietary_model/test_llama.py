@@ -187,7 +187,7 @@ class LocalLlamaHandler(BaseHandler):
 
 
             
-    def _multi_threaded_inference(self, test_case, include_debugging_log):
+    def _multi_threaded_inference(self, test_case, include_input_log: bool, include_state_log: bool):
         """
         This is a wrapper function to make sure that, if an error occurs during inference, the process does not stop.
         """
@@ -195,9 +195,9 @@ class LocalLlamaHandler(BaseHandler):
 
         try:
             if "multi_turn" in test_case["id"]:
-                model_responses, metadata = self.inference_multi_turn_prompting(test_case, include_debugging_log)
+                model_responses, metadata = self.inference_multi_turn_prompting(test_case,include_input_log, include_state_log)
             else:
-                model_responses, metadata = self.inference_single_turn_prompting(test_case, include_debugging_log)
+                model_responses, metadata = self.inference_single_turn_prompting(test_case, include_input_log)
         except Exception as e:
             print("-" * 100)
             print(
