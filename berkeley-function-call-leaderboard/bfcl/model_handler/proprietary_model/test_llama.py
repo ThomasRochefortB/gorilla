@@ -1,3 +1,4 @@
+import os
 import json
 from openai import OpenAI
 from tqdm import tqdm
@@ -13,12 +14,20 @@ from bfcl.model_handler.utils import (
 )
 
 class LocalLlamaHandler(BaseHandler):
-    def __init__(self, model_name, temperature, api_base_url="http://localhost:8000/v1") -> None:
+    def __init__(self, model_name, temperature) -> None:
         super().__init__(model_name, temperature)
         self.model_style = ModelStyle.OSSMODEL
+        
+        # Read from env vars with fallbacks
+        vllm_host = os.getenv('VLLM_ENDPOINT', 'localhost')
+        vllm_port = os.getenv('VLLM_PORT', '8000')
+        
+        # Construct the API base URL
+        api_base_url = f"http://{vllm_host}:{vllm_port}/v1"
+        
         self.client = OpenAI(base_url=api_base_url, api_key="EMPTY")
         self.model_name_huggingface = model_name.replace("-FC", "")
-        self.temperature = 0.0 
+        self.temperature = 0.0
     def _format_prompt(self, messages, function):
         formatted_prompt = "<|begin_of_text|>"
 
