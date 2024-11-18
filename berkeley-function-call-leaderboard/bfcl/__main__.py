@@ -192,7 +192,7 @@ def evaluate(
     """
 
     load_dotenv(dotenv_path=DOTENV_PATH, verbose=True, override=True)  # Load the .env file
-    eval_runner.main(model, test_category, api_sanity_check,wandb_project)
+    eval_runner.main(model, test_category, api_sanity_check)
 
 
 @cli.command()
