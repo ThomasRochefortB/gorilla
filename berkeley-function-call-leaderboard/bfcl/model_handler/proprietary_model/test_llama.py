@@ -127,12 +127,12 @@ class LocalLlamaHandler(BaseHandler):
             )
         return inference_data
 
-    def inference(self, test_entry: dict, include_debugging_log: bool):
+    def inference(self, test_entry: dict, include_input_log: bool, include_state_log: bool):
         try:
             if "multi_turn" in test_entry["id"]:
-                model_responses, metadata = self.inference_multi_turn_prompting(test_entry, include_debugging_log)
+                model_responses, metadata = self.inference_multi_turn_prompting(test_entry, include_input_log, include_state_log)
             else:
-                model_responses, metadata = self.inference_single_turn_prompting(test_entry, include_debugging_log)
+                model_responses, metadata = self.inference_single_turn_prompting(test_entry, test_entry, include_input_log)
         except Exception as e:
             print("-" * 100)
             print(
@@ -152,7 +152,8 @@ class LocalLlamaHandler(BaseHandler):
         num_gpus: int,
         gpu_memory_utilization: float,
         backend: str,
-        include_debugging_log: bool,
+        include_input_log: bool,
+        include_state_log: bool,
     ):
         """
         Batch inference for OSS models.
@@ -171,7 +172,7 @@ class LocalLlamaHandler(BaseHandler):
                 ) as pbar:
 
                     for test_case in test_entries:
-                        future = executor.submit(self._multi_threaded_inference, test_case, include_debugging_log)
+                        future = executor.submit(self._multi_threaded_inference, test_case, include_input_log, include_state_log)
                         futures.append(future)
 
                     for future in futures:
