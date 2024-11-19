@@ -82,7 +82,7 @@ api_inference_handler_map = {
     "command-r-plus-optimized": CohereHandler,
     "snowflake/arctic": NvidiaHandler,
     "nvidia/nemotron-4-340b-instruct": NvidiaHandler,
-    "local_llama": LocalLlamaHandler,
+    "local/llama": LocalLlamaHandler,
     "BitAgent/GoGoAgent": GoGoAgentHandler,
     # "yi-large-fc": YiHandler,  #  Their API is under maintenance, and will not be back online in the near future
 }
