@@ -457,6 +457,12 @@ MODEL_METADATA_MAPPING = {
         "Meta",
         "Meta Llama 3 Community",
     ],
+    "local/llama": [
+        "Llama-3.2-1B-Instruct (FC)",
+        "https://llama.meta.com/llama3",
+        "Meta",
+        "Meta Llama 3 Community",
+    ],
     
     "command-r-plus-FC": [
         "Command-R-Plus (FC) (Original)",
